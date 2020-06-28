@@ -1,3 +1,4 @@
+import LipidSim from './lipid-sim';
 import Vector2 from './vector-2';
 
 export default class ForceDefinition {
@@ -19,8 +20,8 @@ export default class ForceDefinition {
   constructor(
     maxMagnitude: number,
     minMagnitude: number,
-    maxRadius: number,
-    minRadius: number
+    minRadius: number,
+    maxRadius: number
   ) {
     this.maxMagnitude = maxMagnitude;
     this.minMagnitude = minMagnitude;
@@ -31,25 +32,45 @@ export default class ForceDefinition {
   }
 
   // Get the magnitude of this force at the given distance
-  forceMagnitude(distance: number) {
-    if (distance <= this.maxRadius) {
+  magnitude(distance: number) {
+    if (distance <= this.minRadius) {
       return this.maxMagnitude;
-    } else if (distance >= this.minRadius) {
+    } else if (distance >= this.maxRadius) {
       return this.minMagnitude;
     } else {
       return (
-        this.minMagnitude +
-        (this.rangeMagnitude * (distance - this.maxRadius)) / this.rangeRadius
+        this.maxMagnitude -
+        (this.rangeMagnitude * (distance - this.minRadius)) / this.rangeRadius
       );
     }
   }
 
-  // Get the vector of this force on the target, and write it to the dest vector
-  forceVector(target: Vector2, dest: Vector2) {
-    let distance = target.distance();
-    let f = this.forceMagnitude(distance) / distance;
-    dest.x = target.x * f;
-    dest.y = target.y * f;
-    return dest;
+  // Get the vector of the force from one vector to another, and write it to the dest vector
+  forceVector(from: Vector2, to: Vector2, dest: Vector2) {
+    dest.x = to.x - from.x;
+    dest.y = to.y - from.y;
+    let distance = dest.magnitude();
+    let f = this.magnitude(distance) / distance;
+    return dest.multLocal(f);
+  }
+
+  torque(position: Vector2, force: Vector2, actionPoint: Vector2) {
+    let forceOffset = position.offset(actionPoint);
+    let angle = this.angleBetween(forceOffset, force);
+    return force.magnitude() * forceOffset.magnitude() * Math.sin(angle);
+  }
+
+  /* angle between two vectors (when drawn from same origin */
+  angleBetween(angleFrom: Vector2, angleTo: Vector2) {
+    let a =
+      -Math.atan2(angleTo.y, angleTo.x) + Math.atan2(angleFrom.y, angleFrom.x);
+    a %= LipidSim.TWO_PI;
+    if (a > Math.PI) {
+      a -= LipidSim.TWO_PI;
+    }
+    if (a < -Math.PI) {
+      a += LipidSim.TWO_PI;
+    }
+    return a;
   }
 }
