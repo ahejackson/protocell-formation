@@ -2,45 +2,48 @@ import LipidSim from './lipid-sim';
 import Vector2 from './vector-2';
 
 export default class ForceDefinition {
-  // the maximum magnitude of the force
-  readonly maxMagnitude: number;
+  // the maximum strength of the force
+  readonly maxStrength: number;
 
-  // minimum magnitude of the force
-  readonly minMagnitude: number;
+  // minimum strength of the force
+  readonly minStrength: number;
 
-  // the radius of the range within which the force maintains the maximum magnitude
-  readonly maxRadius: number;
-
-  // the radius of the range within which the force mantains the minimum magnitude
+  // the radius of the range within which the force is at maximum strength
   readonly minRadius: number;
 
-  readonly rangeMagnitude: number;
-  readonly rangeRadius: number;
+  // the range over which the strength of the force reduces from max to min
+  readonly falloffRange: number;
+
+  readonly rangeStrength: number;
+
+  // the radius of the range beyond which the force is at minimum strength
+  readonly maxRadius: number;
 
   constructor(
-    maxMagnitude: number,
-    minMagnitude: number,
+    maxStrength: number,
+    minStrength: number,
     minRadius: number,
-    maxRadius: number
+    falloffRange: number
   ) {
-    this.maxMagnitude = maxMagnitude;
-    this.minMagnitude = minMagnitude;
-    this.maxRadius = maxRadius;
+    this.maxStrength = maxStrength;
+    this.minStrength = minStrength;
     this.minRadius = minRadius;
-    this.rangeMagnitude = maxMagnitude - minMagnitude;
-    this.rangeRadius = maxRadius - minRadius;
+    this.falloffRange = falloffRange;
+
+    this.maxRadius = minRadius + falloffRange;
+    this.rangeStrength = maxStrength - minStrength;
   }
 
-  // Get the magnitude of this force at the given distance
-  magnitude(distance: number) {
+  // Get the strength of this force at the given distance
+  strength(distance: number) {
     if (distance <= this.minRadius) {
-      return this.maxMagnitude;
+      return this.maxStrength;
     } else if (distance >= this.maxRadius) {
-      return this.minMagnitude;
+      return this.minStrength;
     } else {
       return (
-        this.maxMagnitude -
-        (this.rangeMagnitude * (distance - this.minRadius)) / this.rangeRadius
+        this.maxStrength -
+        (this.rangeStrength * (distance - this.minRadius)) / this.falloffRange
       );
     }
   }
@@ -50,7 +53,7 @@ export default class ForceDefinition {
     dest.x = to.x - from.x;
     dest.y = to.y - from.y;
     let distance = dest.magnitude();
-    let f = this.magnitude(distance) / distance;
+    let f = this.strength(distance) / distance;
     return dest.multLocal(f);
   }
 
@@ -60,7 +63,7 @@ export default class ForceDefinition {
     return force.magnitude() * forceOffset.magnitude() * Math.sin(angle);
   }
 
-  /* angle between two vectors (when drawn from same origin */
+  /* angle between two vectors (when drawn from same origin) */
   angleBetween(angleFrom: Vector2, angleTo: Vector2) {
     let a =
       -Math.atan2(angleTo.y, angleTo.x) + Math.atan2(angleFrom.y, angleFrom.x);

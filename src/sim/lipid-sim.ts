@@ -5,8 +5,12 @@ import Vector2 from './vector-2';
 export default class LipidSim {
   static readonly TWO_PI = Math.PI * 2;
   static readonly NUM_FORCES = 9;
+
+  // These are really parameters
   static readonly FRICTION_LINEAR = 1;
   static readonly FRICTION_ANGULAR = 1;
+  static readonly STOCHASTIC_LINEAR = 0.1;
+  static readonly STOCHASTIC_ANGULAR = 0.1;
 
   static readonly HEAD_RADIUS = 5;
   static readonly TAIL_HALFLENGTH = 15;
@@ -31,13 +35,13 @@ export default class LipidSim {
     this.numLipids = numLipids;
 
     // setup the forces
-    this.forceDefinitions[0] = new ForceDefinition(40, 0.4, 15, 2 * 15); // blue
-    this.forceDefinitions[1] = new ForceDefinition(-30, 0, 30, 30 + 0.001); // red
-    this.forceDefinitions[2] = new ForceDefinition(-30, -0.6, 30, 2 * 30); // yellow
-    this.forceDefinitions[3] = new ForceDefinition(-30, -0.6, 30, 2 * 30); // green
-    this.forceDefinitions[4] = new ForceDefinition(40, 0.4, 40, 2 * 40); // cyan
-    this.forceDefinitions[5] = new ForceDefinition(-1600, 0, 15, 15 + 0.001);
-    this.forceDefinitions[6] = new ForceDefinition(-1600, 0, 15, 15 + 0.001);
+    this.forceDefinitions[0] = new ForceDefinition(40, 0.4, 15, 15); // blue
+    this.forceDefinitions[1] = new ForceDefinition(-30, 0, 30, 0.001); // red
+    this.forceDefinitions[2] = new ForceDefinition(-30, -0.6, 30, 30); // yellow
+    this.forceDefinitions[3] = new ForceDefinition(-30, -0.6, 30, 30); // green
+    this.forceDefinitions[4] = new ForceDefinition(40, 0.4, 40, 40); // cyan
+    this.forceDefinitions[5] = new ForceDefinition(-1600, 0, 15, 0.001);
+    this.forceDefinitions[6] = new ForceDefinition(-1600, 0, 15, 0.001);
 
     // add lipids
     this.lipids = this.createLipids(this.numLipids, this.width, this.height);

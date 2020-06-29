@@ -51,22 +51,27 @@ export default class Body {
     }
 
     // Apply friction damping
-    this.force.x -= LipidSim.FRICTION_LINEAR * this.velocity.x;
-    this.force.y -= LipidSim.FRICTION_LINEAR * this.velocity.y;
+    let randomLinear = LipidSim.STOCHASTIC_LINEAR * Math.random() * t;
+    this.force.x += randomLinear - LipidSim.FRICTION_LINEAR * this.velocity.x;
+    this.force.y += randomLinear - LipidSim.FRICTION_LINEAR * this.velocity.y;
 
-    // 2. forward Euler integration of velocity
-    this.velocity.x += this.force.x * t;
-    this.velocity.y += this.force.y * t;
-
-    // 3. forward Euler integration of position
+    // 2. forward Euler integration of position
     this.position.x += 0.5 * this.force.x * t * t + this.velocity.x * t;
     this.position.y += 0.5 * this.force.y * t * t + this.velocity.y * t;
+
+    // 3. forward Euler integration of velocity
+    // Done *after* position because it uses the velocity from the previous timestep
+    // (apparently...)
+    this.velocity.x += this.force.x * t;
+    this.velocity.y += this.force.y * t;
 
     // Angular movement
     for (let i = 0; i < LipidSim.NUM_FORCES; i++) {
       this.torque += this.torques[i];
     }
-    this.torque -= this.angularVelocity * LipidSim.FRICTION_ANGULAR;
+    this.torque +=
+      LipidSim.STOCHASTIC_ANGULAR * Math.random() * t -
+      this.angularVelocity * LipidSim.FRICTION_ANGULAR;
     this.angularVelocity += t * (this.torque / LipidSim.ROTATIONAL_INTERTIA);
     this.theta +=
       0.5 * (this.torque / LipidSim.ROTATIONAL_INTERTIA) * t * t +
