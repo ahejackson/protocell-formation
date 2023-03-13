@@ -1,22 +1,20 @@
 {
-  "name": "lipids",
+  "name": "protocell-formation",
   "version": "1.0.0",
-  "description": "A model of lipid formation based on the paper: Edwards, Linglan, Yun Peng, and James A. Reggia. 'Computational models for the formation of protocell structures.' Artificial Life 4.1 (1998): 61-77.",
-  "main": "index.js",
-  "scripts": {
-    "build": "parcel build src/index.html",
-    "clean": "rm -rf .cache",
-    "dev": "parcel src/index.html",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "author": "Adam Jackson",
-  "license": "ISC",
+  "license": "MIT",
+  "description": "A model of protocell formation based on the paper: Edwards, Linglan, Yun Peng, and James A. Reggia. 'Computational models for the formation of protocell structures.' Artificial Life 4.1 (1998): 61-77.",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
   "devDependencies": {
-    "parcel-bundler": "^1.12.4",
-    "prettier": "^2.0.5",
-    "typescript": "^3.9.5"
+    "typescript": "^4.9.3",
+    "vite": "^4.1.0"
   },
   "dependencies": {
-    "stats.js": "github:ahejackson/stats.js"
+    "stats.js": "github:ahejackson/stats.ts"
   }
 }
