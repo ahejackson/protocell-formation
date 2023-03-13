@@ -1,6 +1,5 @@
 import LipidSim from './sim/lipid-sim';
 import * as viz from './viz/lipid-sim-viz';
-// import Stats from 'stats.js';
 
 // Sim Settings
 let running = false;
@@ -8,8 +7,6 @@ let stepCount = 2;
 
 let sim: LipidSim;
 let ctx: CanvasRenderingContext2D;
-// let stats: Stats;
-// showStats: false;
 
 // Init
 const init = () => {
@@ -20,11 +17,7 @@ const init = () => {
   // Create the sim
   sim = new LipidSim(900, 900, 200);
 
-  // Create the stats
-  // stats = new Stats();
-  // stats.showPanel(1);
-  // document.body.appendChild(stats.dom);
-
+  // Show the sim
   viz.drawSim(ctx, sim);
 };
 
